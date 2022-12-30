@@ -37,16 +37,30 @@ export function SignUp() {
   }
 
   async function handleSingUp({ name, email, password }: FormDataProps) {
-    try {
-      const response = await api.post('/api/auth/register', {
+    const response = await fetch('http://app.com.br:80/api/auth/register', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
         'name': name,
         'cpf': email,
         'password': password
       })
-      console.log(response.data)
-    } catch(error) {
-      console.log(error)
-    }
+    })
+    const data = await response.json()
+    console.log(data)
+    // try {
+    //   const response = await api.post('/api/auth/register', {
+    //     'name': name,
+    //     'cpf': email,
+    //     'password': password
+    //   })
+    //   console.log(response.data)
+    // } catch(error) {
+    //   console.log(error)
+    // }
   }
 
   return (
