@@ -52,6 +52,7 @@ export function SignUp() {
         'email': email,
         'password': password
       })
+      await signIn(email, password)
       
     } catch(error) {
       setIsLoading(false)
@@ -139,6 +140,7 @@ export function SignUp() {
           <Button
             title='Criar e acessar'
             onPress={handleSubmit(handleSingUp)}
+            isLoading={isLoading}
           />
         </Center>
 

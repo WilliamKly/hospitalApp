@@ -7,7 +7,7 @@ import { createContext, ReactNode, useEffect, useState } from "react"
 export type AuthContextDataProps = {
   user: UserDTO;
   signIn: (email: string, password: string) => Promise<void>;
-  signOut: () => Promise<void>
+  signOut: () => Promise<void>;
   isLoadingUserStorageData: boolean
 }
 
@@ -23,13 +23,9 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
 
   async function signIn(email: string, password: string) {
     try {
-      const { data } = await api.post('/api/auth/login', {
-        'email': email,
-        'password': password
-      })
-      console.log(data.user)
+      const { data } = await api.post('/api/auth/login', { email, password })
+
       if (data.user) {
-        console.log(user)
         setUser(data.user)
         storageUserSave(data.user)
       }
@@ -44,7 +40,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
       setUser({} as UserDTO)
 
       await storageUserRemove()
-      
+
     } catch(error) {
       throw error
     } finally {
