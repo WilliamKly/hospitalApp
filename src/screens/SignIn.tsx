@@ -37,7 +37,16 @@ export function SignIn() {
       setIsLoading(true)
       await signIn(email, password)
     } catch(error) {
+      const isAppError = error instanceof AppError;
+      const title = isAppError ? error.mensagem : 'Email e/ou senha incorreta.'
+
       setIsLoading(false)
+      toast.show({
+        title,
+        justifyContent: 'center',
+        marginBottom: 250,
+        bgColor: 'red.500'
+      })
     
     }
   }

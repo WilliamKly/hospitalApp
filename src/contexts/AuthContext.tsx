@@ -29,6 +29,13 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
         setUser(data.user)
         storageUserSave(data.user)
       }
+
+      if(data.mensagem) {
+        console.log('TEVE ERRO DE MENSAGEM')
+        console.log(data.mensagem)
+        return
+      }
+
     } catch(error) {
       throw error
     }
