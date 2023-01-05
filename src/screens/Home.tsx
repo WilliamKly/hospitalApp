@@ -1,21 +1,43 @@
-import { useState } from 'react'
-import { useNavigation } from '@react-navigation/native'
+import { useCallback, useEffect, useState } from 'react'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { Group } from "@components/Group";
 import { HomeHeader } from "@components/HomeHeader";
-import { VStack, FlatList, HStack, Heading, Text } from "native-base";
+import { VStack, FlatList, HStack, Heading, Text, useToast } from "native-base";
+import { EscalaDTO } from '@dtos/EscalaDTO'
 import { ExerciseCard } from '@components/ExerciseCard';
 import { AppNavigatorRoutesProps } from '@routes/app.routes';
+import { api } from '@services/api';
+import { AppError } from '@utils/AppError';
 
 export function Home() {
+  const [isLoading, setIsLoading] = useState(true)
   const [groups, setGroups] = useState(['ESCALA', 'SOBRE', 'ATENDIMENTO', 'CONTATO'])
-  const [exercises, setExercises] = useState(['SEGUNDA', 'TERÇA', 'QUARTA', 'QUINTA', 'SEXTA'])
+  const [medicos, setMedicos] = useState<EscalaDTO[]>([])
   const [groupSelected, setGroupSelected] = useState('ESCALA')
 
+  const toast = useToast()
   const navigation = useNavigation<AppNavigatorRoutesProps>()
 
   function handleOpenExerciseDetails() {
     navigation.navigate('exercise')
   }
+
+  async function fetchExercisesByGroup() {
+    try {
+      setIsLoading(true)
+      const response = await api.get('/api/cliente/escala/')
+      console.log(response.data)
+      setMedicos(response.data)
+    }catch (error) {
+      console.log(error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useFocusEffect(useCallback(() => {
+    fetchExercisesByGroup()
+  }, [groupSelected]))
 
   return (
     <VStack flex={1}>
@@ -46,14 +68,14 @@ export function Home() {
           </Heading>
 
           <Text color='gray.200' fontSize='sm'>
-            {exercises.length}
+            {medicos.length}
           </Text>
         </HStack>
 
         <FlatList
-          data={exercises}
-          keyExtractor={item => item}
-          renderItem={({ item }) => ( <ExerciseCard onPress={handleOpenExerciseDetails} /> )}
+          data={medicos}
+          keyExtractor={item => item.id}
+          renderItem={({ item }) => ( <ExerciseCard onPress={handleOpenExerciseDetails} data={item} /> )}
           showsVerticalScrollIndicator={false}
           _contentContainerStyle={{ paddingBottom: 20 }}
         />
